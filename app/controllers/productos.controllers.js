@@ -151,3 +151,39 @@ export const deshabilitarProducto = async (req, res) => {
         return res.status(404).json({ message: "Internal Server Error. " + error })
     }
 }
+
+export const restarStockAProducto = async (req, res) => {
+    try {
+        const { productId, cantidad } = req.params;
+        
+        const { rows: stockRows  } = await pool.query(
+            `SELECT stockactual FROM conf_productos WHERE idproducto = $1`,
+            [productId]
+        )
+
+        // Verifica si el producto existe
+        if (stockRows.length  === 0) {
+            return res.status(404).json({ message: "Producto no encontrado" });
+        }
+
+        let stockActual = stockRows[0].stockactual;
+
+        console.log("Cantidad: ", cantidad)
+        console.log("Stock Actual: ", stockActual)
+
+        if(cantidad > stockActual) {
+            return res.status(404).json({ message: "La cantidad no puede ser mayor a la del stock" });
+        }
+
+        const recalcular = parseInt(stockActual) - parseInt(cantidad);
+
+        const { rows } = await pool.query(
+            "UPDATE conf_productos SET stockactual = $1 WHERE idproducto = $2 RETURNING *" ,
+            [recalcular, productId]
+        )
+        return res.status(200).json({ message: "Stock del producto actualizado correctamente" });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Internal Server Error. " + error})
+    }
+}

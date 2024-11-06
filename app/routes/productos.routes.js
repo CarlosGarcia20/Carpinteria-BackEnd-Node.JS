@@ -1,5 +1,5 @@
 import { Router } from "express"
-import {  actualizarStockProducto, deshabilitarProducto, eliminarProducto, habilitarProducto, insertarProducto, obtenerProducto, obtenerProductos } from "../controllers/productos.controllers.js";
+import {  actualizarStockProducto, deshabilitarProducto, eliminarProducto, habilitarProducto, insertarProducto, obtenerProducto, obtenerProductos, restarStockAProducto } from "../controllers/productos.controllers.js";
 
 const router = Router();
 
@@ -16,5 +16,7 @@ router.put('/productos/habilitar/PUT/:productId', habilitarProducto)
 router.put('/productos/deshabilitar/PUT/:productId', deshabilitarProducto)
 
 router.put('/productos/actualizar/PUT/:productId', actualizarStockProducto)
+
+router.put('/productos/agregar/PUT/:productId/:cantidad', restarStockAProducto)
 
 export default router;
