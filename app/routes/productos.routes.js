@@ -3,20 +3,20 @@ import {  actualizarStockProducto, deshabilitarProducto, eliminarProducto, habil
 
 const router = Router();
 
-router.get('/productos/GET', obtenerProductos)
+router.get('/productos', obtenerProductos)
 
-router.get('/productos/GET/:productId', obtenerProducto)
+router.get('/productos/:productId', obtenerProducto)
 
-router.post('/productos/POST', insertarProducto)
+router.post('/productos', insertarProducto)
 
-router.delete('/productos/DELETE/:productId', eliminarProducto)
+router.delete('/productos/:productId', eliminarProducto)
 
-router.put('/productos/habilitar/PUT/:productId', habilitarProducto)
+router.put('/productos/habilitar/:productId', habilitarProducto)
 
-router.put('/productos/deshabilitar/PUT/:productId', deshabilitarProducto)
+router.put('/productos/deshabilitar/:productId', deshabilitarProducto)
 
-router.put('/productos/actualizar/PUT/:productId', actualizarStockProducto)
+router.put('/productos/actualizar/:productId', actualizarStockProducto)
 
-router.put('/productos/agregar/PUT/:productId/:cantidad', restarStockAProducto)
+router.put('/productos/agregar/:productId/:cantidad', restarStockAProducto)
 
 export default router;
