@@ -3,14 +3,14 @@ import { actualizarUsuario, eliminarUsuario, crearUsuario, obtenerUsuario, obten
 
 const router = Router();
 
-router.get('/users/GET', obtenerUsuarios)
+router.get('/users', obtenerUsuarios)
 
-router.post('/users/POST', crearUsuario)
+router.post('/users', crearUsuario)
 
-router.get('/users/GET/:userId', obtenerUsuario)
+router.get('/users/:userId', obtenerUsuario)
 
-router.delete('/users/DELETE/:userId', eliminarUsuario)
+router.delete('/users/:userId', eliminarUsuario)
 
-router.put('/users/PUT/:userId', actualizarUsuario)
+router.put('/users/:userId', actualizarUsuario)
 
 export default router;
