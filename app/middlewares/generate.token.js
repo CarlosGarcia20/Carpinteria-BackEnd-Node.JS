@@ -5,7 +5,7 @@ export const generarToken = (idusuario, nombre, apellido, idrolusuario) => {
     return jwt.sign(
         { usuario: nombre + " " + apellido, idusuario: idusuario, idrol: idrolusuario }, 
         SECRET_JWT_KEY, {
-            expiresIn: '15m'
+            expiresIn: '1h'
         }
     );
 };
