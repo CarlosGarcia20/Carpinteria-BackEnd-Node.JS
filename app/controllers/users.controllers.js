@@ -1,11 +1,25 @@
 import { pool } from "../db.js";
 import { encrypt } from "../helpers/handleBcrypt.js";
 
-export const obtenerUsuarios = async(req, res) => {
-    const { rows } = await pool.query("SELECT * FROM usuarios ORDER BY idusuario ASC")
-    console.log(rows);
-    res.json(rows);  
-}
+export const obtenerUsuarios = async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT 
+            idusuario, nombre, apellido, usuario, idrol 
+            FROM usuarios 
+            ORDER BY idusuario ASC`
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "No se encontraron usuarios" });
+        }
+
+        return res.status(200).json(rows);
+    } catch (error) {
+        return res.status(500).json({ message: "Error Internal Server" });
+    }
+};
+
 
 export const obtenerUsuario = async(req, res) => {
     const {userId} = req.params
@@ -20,10 +34,10 @@ export const obtenerUsuario = async(req, res) => {
 export const crearUsuario = async(req, res) => {
     try {
         const data = req.body
-        const contraseñaHash = await encrypt(data.contraseña);
+        const contraseñaHash = await encrypt(data.password);
         
         const {rows} = await pool.query(
-            "INSERT INTO usuarios (usuario, contraseña, nombre, apellido) VALUES ($1, $2, $3, $4) RETURNING *", [data.usuario, contraseñaHash, data.nombre, data.apellido]
+            "INSERT INTO usuarios (usuario, contraseña, nombre, apellido) VALUES ($1, $2, $3, $4) RETURNING *", [data.username, contraseñaHash, data.nombre, data.apellido]
         );
         return res.status(200).json({ message: "Usuario creado con éxito" });
         

@@ -5,7 +5,16 @@ export const generarToken = (idusuario, nombre, apellido, idrolusuario) => {
     return jwt.sign(
         { usuario: nombre + " " + apellido, idusuario: idusuario, idrol: idrolusuario }, 
         SECRET_JWT_KEY, {
-            expiresIn: '1h'
+            expiresIn: '15m'
+        }
+    );
+};
+
+export const generarRefreshToken = (idusuario, nombre, apellido, idrolusuario) => {
+    return jwt.sign(
+        { usuario: nombre + " " + apellido, idusuario: idusuario, idrol: idrolusuario }, 
+        SECRET_JWT_KEY, {
+            expiresIn: '7d'
         }
     );
 };

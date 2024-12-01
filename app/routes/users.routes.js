@@ -1,9 +1,10 @@
 import { Router } from "express"
 import { actualizarUsuario, eliminarUsuario, crearUsuario, obtenerUsuario, obtenerUsuarios } from "../controllers/users.controllers.js";
+import validarSesion from "../middlewares/user.token.js";
 
 const router = Router();
 
-router.get('/users', obtenerUsuarios)
+router.get('/obtainUsers', validarSesion, obtenerUsuarios);
 
 router.post('/users', crearUsuario)
 

@@ -1,19 +1,40 @@
-import express from 'express'
-import { PORT } from './config.js'
-import userRoutes from './routes/users.routes.js'
-import loginRoutes from './routes/login.routes.js'
-import productsRoutes from './routes/productos.routes.js'
+import express from 'express';
+import { PORT } from './config.js';
+import userRoutes from './routes/users.routes.js';
+import loginRoutes from './routes/login.routes.js';
+import productsRoutes from './routes/productos.routes.js';
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import validarSesion from './middlewares/user.token.js';  // Importa el middleware
+import cors from 'cors';
 
 const app = express()
 
+app.use(morgan('dev'))
+app.use(cors({
+    origin: 'http://localhost:4200', // Especifica el origen permitido
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
+}));
 app.use(express.json())
 app.use(cookieParser())
-app.use(validarSesion)
 
-app.set('view engine', 'ejs')
+// Modificar para rutas privadas
+// app.use('/private', validarSesion)
+
+// Configuracion de vistas
+// app.set('view engine', 'ejs')
+
+// Rutas
+app.use(userRoutes);
+app.use(loginRoutes);
+app.use(productsRoutes);
+
+//Middleware global para el manejo de errores
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal Server Error' });
+});
 
 // app.use((req, res, next) => {
 //     const token = req.cookies.access_token
@@ -27,12 +48,18 @@ app.set('view engine', 'ejs')
 //     next() 
 // })
 
+app.listen(PORT, () => {
+    console.log("Servidor en el puerto: ", PORT);
+});
 
-app.use(morgan('dev'))
-app.use(userRoutes);
-app.use(loginRoutes);
-app.use(productsRoutes);
-
-
-app.listen(PORT);
-console.log("Servidor en el puerto: ", PORT);
+//De esta manera se tiene que crear el token
+// Esto se obtiene del rows de repuesta
+// const { idusuario } = rows[0];
+// const token = generarToken(idusuario, nombre, apellido);
+// .status(200)
+// .cookie('access_token', token, {
+//     httpOnly: true, // La cookie solo se puede acceder en el servidor
+//     secure: process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en HTTPS
+//     sameSite: 'strict', // La cookie solo se puede acceder en el mismo sitio
+//     maxAge: 1000 * 60 * 60, // La cookie tiene un tiempo de validez de 1 hora
+// })
