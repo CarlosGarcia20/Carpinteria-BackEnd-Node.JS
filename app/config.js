@@ -5,5 +5,6 @@ export const {
     DB_DATABASE = "prueba",
     DB_PORT = "5432",
     PORT = process.env.PORT || 4000,
-    SECRET_JWT_KEY = 'esta-es-una-increible-llave-secreta-pero-bien-largota-macizo'
+    SECRET_JWT_KEY = 'esta-es-una-increible-llave-secreta-pero-bien-largota-macizo',
+    REFRESJ_JWT_KEY = 'esta-es-una-increible-llave-secreta-pero-bien-largota-macizo-para-el-refresh-token',
 } = process.env

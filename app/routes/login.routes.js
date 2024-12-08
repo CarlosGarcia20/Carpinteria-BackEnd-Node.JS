@@ -3,7 +3,7 @@ import { login, logout, principal, registrarUsuario } from "../controllers/login
 
 const router = Router();
 
-router.get('/', principal)
+// router.get('/', principal)
 
 router.post('/login', login);
 

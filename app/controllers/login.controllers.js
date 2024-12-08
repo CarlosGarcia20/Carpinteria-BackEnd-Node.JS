@@ -17,6 +17,10 @@ export const login = async(req, res) => {
         return res.status(400).json({ message: "Ingresa un usuario para continuar" });
     }
 
+    if (!password) {
+        return res.status(400).json({ message: "Ingresa una contraseña para continuar" });
+    }
+
     try {
         const { rows } = await pool.query('SELECT * FROM usuarios WHERE usuario = $1', [username]);
 
@@ -29,11 +33,14 @@ export const login = async(req, res) => {
         
         if(contraseñaHash) {
             const token = generarToken(idusuario, nombre, apellido, idrol)
-            // const refreshToken = generarRefreshToken(idusuario, nombre, apellido, idrol)
+            // const refreshToken = generarRefreshToken(idusuario)
 
             res
             .status(200)
-            .json( { token: token } );
+            .json({ 
+                token
+            });
+
             // .cookie('refreshToken', refreshToken, {
             //     httpOnly: true,     //La cookie solo se puede acceder en el servidor
             //     secure: process.env.NODE_ENV == 'production', //la cookie solo se puede acceder en https
@@ -44,7 +51,7 @@ export const login = async(req, res) => {
             return res.status(401).json({ message: "La contraseña es incorrecta"} );
         }
     } catch (error) {
-        console.error("Error al obtener el usuario: ", error);
+        console.error("Error al obtener el usuario: ", error.message);
         return res.status(500).json({ message: "Error interno del servidor" });
     }
 }

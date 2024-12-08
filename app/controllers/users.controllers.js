@@ -1,11 +1,11 @@
 import { pool } from "../db.js";
-import { encrypt } from "../helpers/handleBcrypt.js";
+import { encrypt, compare } from "../helpers/handleBcrypt.js";
 
 export const obtenerUsuarios = async (req, res) => {
     try {
         const { rows } = await pool.query(
             `SELECT 
-            idusuario, nombre, apellido, usuario, idrol 
+            idusuario, nombre, apellido, usuario, idrol, activo
             FROM usuarios 
             ORDER BY idusuario ASC`
         );
@@ -66,11 +66,37 @@ export const eliminarUsuario = async(req, res) => {
 }
 
 export const actualizarUsuario = async(req, res) => {
-    const {userId} = req.params
+    const { userId } = req.params;
     const data = req.body;
-    const {rows} = await pool.query(
-        "UPDATE usuarios SET nombre = $1, apellido = $2 WHERE idusuario = $3 RETURNING *", [data.nombre, data.apellido, userId]
-    )
+
+    // Obtener el usuario actual para comparar las contraseñas
+    const { rows: usuario } = await pool.query(
+        `SELECT * FROM usuarios WHERE idusuario = $1`,
+        [userId]
+    );
+
+    if (usuario.length === 0) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Encriptar la contraseña si se proporciona una nueva
+    let contraseñaHash;
+
+    if (data.password && data.password.trim() !== "") {
+        // Encriptar la nueva contraseña
+        contraseñaHash = await encrypt(data.password);
+    } else {
+        // Usar la contraseña actual del usuario
+        contraseñaHash = usuario[0].contraseña;
+    }
+
+    // Realizar la actualización con la nueva contraseña (si se encriptó)
+    const { rows } = await pool.query(`
+        UPDATE usuarios 
+        SET usuario = $1, contraseña = $2, nombre = $3, apellido = $4, idrol = $5, activo = $6
+        WHERE idusuario = $7 RETURNING *`,
+        [data.username, contraseñaHash, data.nombre, data.apellido, data.idRol, data.activo, userId]
+    );
 
     return res.json(rows[0]);
 }

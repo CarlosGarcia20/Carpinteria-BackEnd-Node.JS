@@ -1,22 +1,31 @@
 import { Router } from "express"
-import {  actualizarStockProducto, deshabilitarProducto, eliminarProducto, habilitarProducto, insertarProducto, obtenerProducto, obtenerProductos, restarStockAProducto } from "../controllers/productos.controllers.js";
+import multer from 'multer';
+import path from 'path';
+import { eliminarProducto, guardarEditarProducto, insertarProducto, obtenerProducto, obtenerProductos } from "../controllers/productos.controllers.js";
+
+// Configurar multer para la ruta de imagen
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'app/uploads');
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
+});
+  
+  const upload = multer({ storage });
 
 const router = Router();
 
-router.get('/productos', obtenerProductos)
+router.get('/obtainProducts', obtenerProductos)
 
 router.get('/productos/:productId', obtenerProducto)
 
-router.post('/productos', insertarProducto)
+router.post('/insertProducts', upload.single('imagen'), insertarProducto)
 
-router.delete('/productos/:productId', eliminarProducto)
+router.delete('/deletProduct/:productId', eliminarProducto)
 
-router.put('/productos/habilitar/:productId', habilitarProducto)
-
-router.put('/productos/deshabilitar/:productId', deshabilitarProducto)
-
-router.put('/productos/actualizar/:productId', actualizarStockProducto)
-
-router.put('/productos/agregar/:productId/:cantidad', restarStockAProducto)
+router.put('/productos/update/:productId', guardarEditarProducto)
 
 export default router;

@@ -1,11 +1,18 @@
 import express from 'express';
 import { PORT } from './config.js';
+import path from 'path';
+
+// Rutas
 import userRoutes from './routes/users.routes.js';
 import loginRoutes from './routes/login.routes.js';
 import productsRoutes from './routes/productos.routes.js';
+import catalogosRoutes from './routes/catalogos.routes.js';
+
+// Servicios para el funcionamiento del backend
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import validarSesion from './middlewares/user.token.js';  // Importa el middleware
+
+// Libreria para poder aceptar peticiones del frontend
 import cors from 'cors';
 
 const app = express()
@@ -16,19 +23,19 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
 }));
-app.use(express.json())
+app.use(express.json());
+
+// Middleware para cookies
 app.use(cookieParser())
 
-// Modificar para rutas privadas
-// app.use('/private', validarSesion)
-
-// Configuracion de vistas
-// app.set('view engine', 'ejs')
+// Configurar la ruta para servir archivos estaticos
+app.use('/app/uploads', express.static(path.join(process.cwd(), 'app/uploads')));
 
 // Rutas
-app.use(userRoutes);
 app.use(loginRoutes);
+app.use(userRoutes);
 app.use(productsRoutes);
+app.use(catalogosRoutes);
 
 //Middleware global para el manejo de errores
 app.use((err, req, res, next) => {

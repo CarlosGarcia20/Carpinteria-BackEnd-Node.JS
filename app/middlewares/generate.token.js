@@ -10,10 +10,10 @@ export const generarToken = (idusuario, nombre, apellido, idrolusuario) => {
     );
 };
 
-export const generarRefreshToken = (idusuario, nombre, apellido, idrolusuario) => {
+export const generarRefreshToken = (idusuario) => {
     return jwt.sign(
-        { usuario: nombre + " " + apellido, idusuario: idusuario, idrol: idrolusuario }, 
-        SECRET_JWT_KEY, {
+        { idUsuario: idusuario }, 
+        REFRESJ_JWT_KEY, {
             expiresIn: '7d'
         }
     );
