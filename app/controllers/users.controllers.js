@@ -5,7 +5,7 @@ export const obtenerUsuarios = async (req, res) => {
     try {
         const { rows } = await pool.query(
             `SELECT 
-            idusuario, nombre, apellido, usuario, idrol, activo
+            idusuario, nombre, apellido, usuario, idrol, activo, telefono
             FROM usuarios 
             ORDER BY idusuario ASC`
         );
@@ -93,9 +93,9 @@ export const actualizarUsuario = async(req, res) => {
     // Realizar la actualización con la nueva contraseña (si se encriptó)
     const { rows } = await pool.query(`
         UPDATE usuarios 
-        SET usuario = $1, contraseña = $2, nombre = $3, apellido = $4, idrol = $5, activo = $6
-        WHERE idusuario = $7 RETURNING *`,
-        [data.username, contraseñaHash, data.nombre, data.apellido, data.idRol, data.activo, userId]
+        SET usuario = $1, contraseña = $2, nombre = $3, apellido = $4, idrol = $5, activo = $6, telefono = $7
+        WHERE idusuario = $8 RETURNING *`,
+        [data.username, contraseñaHash, data.nombre, data.apellido, data.idRol, data.activo, data.number, userId]
     );
 
     return res.json(rows[0]);

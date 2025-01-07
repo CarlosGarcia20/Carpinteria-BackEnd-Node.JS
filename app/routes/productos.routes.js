@@ -26,6 +26,6 @@ router.post('/insertProducts', upload.single('imagen'), insertarProducto)
 
 router.delete('/deletProduct/:productId', eliminarProducto)
 
-router.put('/productos/update/:productId', guardarEditarProducto)
+router.put('/productos/update/:productId', upload.single('imagen'), guardarEditarProducto)
 
 export default router;

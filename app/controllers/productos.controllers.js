@@ -104,23 +104,25 @@ export const eliminarProducto = async (req, res) => {
 export const guardarEditarProducto = async (req, res) => {
     try {
         const { productId } = req.params;
-        const data = req.body;
+        const { description, claveProducto, idUnidad, costo, idMarca, stockMin, stockMax, stockActual, activo } = req.body;
+        const imagenRuta = req.file ? req.file.path : null; // Ruta donde se almacena la imagen
 
         const { rows, rowCount } = await pool.query(
             `UPDATE conf_productos
             SET descripcion = $1, claveproducto = $2, idunidad = $3, activo = $4, costo = $5, idmarca = $6, stockmin = $7, 
-            stockmax = $8, stockactual = $9
-            WHERE idproducto = $10 RETURNING *`,
+            stockmax = $8, stockactual = $9, imagen = $10
+            WHERE idproducto = $11 RETURNING *`,
             [
-                data.description,
-                data.claveProducto,
-                data.idUnidad,
-                data.activo,
-                data.costo,
-                data.idMarca,
-                data.stockMin,
-                data.stockMax,
-                data.stockActual,
+                description,
+                claveProducto,
+                idUnidad,
+                activo,
+                costo,
+                idMarca,
+                stockMin,
+                stockMax,
+                stockActual,
+                imagenRuta,
                 productId // Ahora se incluye en el arreglo de parámetros
             ]
         );

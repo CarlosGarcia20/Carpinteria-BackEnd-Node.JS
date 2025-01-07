@@ -63,7 +63,7 @@ export const logout = ((req, res) => {
 })
 
 export const registrarUsuario = async (req, res) => {
-    const { username, password, nombre, apellido } = req.body;
+    const { username, password, nombre, apellido, number } = req.body;
 
     try {
         // Verificar si el usuario ya existe
@@ -81,8 +81,9 @@ export const registrarUsuario = async (req, res) => {
 
         // Insertar el nuevo usuario
         const { rows } = await pool.query(
-            "INSERT INTO usuarios (usuario, contraseña, nombre, apellido) VALUES ($1, $2, $3, $4) RETURNING idusuario",
-            [username, contraseñaHash, nombre, apellido]
+            `INSERT INTO usuarios (usuario, contraseña, nombre, apellido, telefono) 
+            VALUES ($1, $2, $3, $4, $5) RETURNING idusuario`,
+            [username, contraseñaHash, nombre, apellido, number]
         );
 
         // Enviar respuesta de exito al frontend
