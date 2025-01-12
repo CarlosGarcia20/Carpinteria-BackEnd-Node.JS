@@ -32,7 +32,12 @@ export const obtenerProductos = async(req, res) => {
             conf_productos.stockactual,
             conf_productos.stockmin,
             conf_productos.stockmax,
-            conf_productos.imagen
+            conf_productos.imagen,
+            conf_productos.ancho,
+            conf_productos.largo,
+            conf_productos.alto,
+            conf_productos.profundidad,
+            conf_productos.informacion
         FROM conf_productos 
         JOIN conf_unidades ON conf_unidades.idunidad = conf_productos.idunidad
         JOIN conf_marcas ON conf_marcas.idmarca = conf_productos.idmarca
@@ -54,13 +59,17 @@ export const obtenerProducto = async(req, res) => {
 
 export const insertarProducto = async(req, res) => {
     try {
-        const { description, claveProducto, idUnidad, costo, idMarca, stockMin, stockMax, stockActual, activo } = req.body;
+        const { 
+            description, claveProducto, idUnidad, costo, idMarca, stockMin, stockMax, stockActual, activo, informacion,
+            ancho, largo, alto, profundidad
+        } = req.body;
         const imagenRuta = req.file ? req.file.path : null; // Ruta donde se almacena la imagen
 
         
         const { rows } = await pool.query(
-            `INSERT INTO conf_productos (descripcion, claveproducto, idunidad, costo, idmarca, stockmin, stockmax, stockactual, activo, imagen) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+            `INSERT INTO conf_productos (descripcion, claveproducto, idunidad, costo, idmarca, stockmin, stockmax, stockactual, activo, imagen, 
+            ancho, largo, alto, profundidad, informacion) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
             RETURNING *`,
             [
               description,
@@ -73,6 +82,11 @@ export const insertarProducto = async(req, res) => {
               stockActual,
               activo,
               imagenRuta,
+              ancho,
+              largo,
+              alto,
+              profundidad,
+              informacion,
             ]
         );
 
@@ -104,14 +118,16 @@ export const eliminarProducto = async (req, res) => {
 export const guardarEditarProducto = async (req, res) => {
     try {
         const { productId } = req.params;
-        const { description, claveProducto, idUnidad, costo, idMarca, stockMin, stockMax, stockActual, activo } = req.body;
-        const imagenRuta = req.file ? req.file.path : null; // Ruta donde se almacena la imagen
+        const { description, claveProducto, idUnidad, costo, idMarca, stockMin, stockMax, stockActual, activo, informacion,
+            ancho, largo, alto, profundidad, imagen
+        } = req.body;
+        const imagenRuta = req.file ? req.file.path : imagen; // Ruta donde se almacena la imagen
 
         const { rows, rowCount } = await pool.query(
             `UPDATE conf_productos
             SET descripcion = $1, claveproducto = $2, idunidad = $3, activo = $4, costo = $5, idmarca = $6, stockmin = $7, 
-            stockmax = $8, stockactual = $9, imagen = $10
-            WHERE idproducto = $11 RETURNING *`,
+            stockmax = $8, stockactual = $9, imagen = $10, ancho = $11, largo = $12, alto = $13, profundidad = $14, informacion = $15
+            WHERE idproducto = $16 RETURNING *`,
             [
                 description,
                 claveProducto,
@@ -123,6 +139,11 @@ export const guardarEditarProducto = async (req, res) => {
                 stockMax,
                 stockActual,
                 imagenRuta,
+                ancho,
+                largo,
+                alto,
+                profundidad,
+                informacion,
                 productId // Ahora se incluye en el arreglo de parámetros
             ]
         );
