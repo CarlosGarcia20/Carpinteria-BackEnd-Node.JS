@@ -17,44 +17,62 @@ const upload = multer({ storage });
 
 
 export const obtenerProductos = async(req, res) => {
-    const { rows } = await pool.query(`
-        SELECT 
-            conf_productos.idproducto,
-            conf_productos.idmarca,
-            conf_marcas.nombre AS marca,
-            conf_productos.descripcion,
-            conf_productos.claveproducto,
-            conf_productos.idunidad,
-            conf_unidades.nombre AS unidad,
-            conf_productos.fechaalta,
-            conf_productos.activo,
-            conf_productos.costo,
-            conf_productos.stockactual,
-            conf_productos.stockmin,
-            conf_productos.stockmax,
-            conf_productos.imagen,
-            conf_productos.ancho,
-            conf_productos.largo,
-            conf_productos.alto,
-            conf_productos.profundidad,
-            conf_productos.informacion
-        FROM conf_productos 
-        JOIN conf_unidades ON conf_unidades.idunidad = conf_productos.idunidad
-        JOIN conf_marcas ON conf_marcas.idmarca = conf_productos.idmarca
-        ORDER BY idproducto ASC
-    `)
-    // console.log(rows);
-    res.json(rows);  
+    try {
+        const { rows } = await pool.query(`
+            SELECT 
+                conf_productos.idproducto,
+                conf_productos.idmarca,
+                conf_marcas.nombre AS marca,
+                conf_productos.descripcion,
+                conf_productos.claveproducto,
+                conf_productos.idunidad,
+                conf_unidades.nombre AS unidad,
+                conf_productos.fechaalta,
+                conf_productos.activo,
+                conf_productos.costo,
+                conf_productos.stockactual,
+                conf_productos.stockmin,
+                conf_productos.stockmax,
+                conf_productos.imagen,
+                conf_productos.ancho,
+                conf_productos.largo,
+                conf_productos.alto,
+                conf_productos.profundidad,
+                conf_productos.informacion
+            FROM conf_productos 
+            JOIN conf_unidades ON conf_unidades.idunidad = conf_productos.idunidad
+            JOIN conf_marcas ON conf_marcas.idmarca = conf_productos.idmarca
+            WHERE conf_productos.activo = 'S' AND stockactual > 0
+            ORDER BY idproducto ASC
+        `)
+        // console.log(rows);
+        res.json(rows);  
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error." });
+    }
 }
 
 export const obtenerProducto = async(req, res) => {
-    const { productId } = req.params
-    const { rows } = await pool.query('SELECT * FROM conf_productos WHERE idproducto = $1', [productId]);
+    try {
+        const { productId } = req.params
+        const { rows } = await pool.query(
+            `SELECT * FROM conf_productos 
+            WHERE idproducto = $1 AND activo = 'S' AND stockactual >= 1 `, 
+            [productId]
+        );
+    
+        if(rows.length === 0 ) {
+            return res.status(404).json({ message: "Producto no encontrado" });
+        }
+        res.json(rows[0])
+        
+    } catch (error) {
+        console.log(error);
 
-    if(rows.length === 0 ) {
-        return res.status(404).json({ message: "Producto no encontrado" });
+        return res.status(500).json({ message: "Internal Server Error. " + error });
     }
-    res.json(rows[0])
+
+
 }
 
 export const insertarProducto = async(req, res) => {
@@ -158,3 +176,33 @@ export const guardarEditarProducto = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error." });
     }
 };
+
+export const verificarStock = async(req, res) =>  {
+    try {
+        const { productId } = req.params;
+        const { cantidad } = req.body;
+
+        console.log(productId)
+        console.log(cantidad)
+
+        const { rows, rowCount } = await pool.query(
+            `SELECT stockactual FROM conf_productos WHERE idproducto = $1`, [productId]
+        );
+
+        if (rowCount === 0) {
+            return res.status(404).json({ message: "Producto no encontrado" });
+        }
+
+        const stockActualizado = rows[0].stockactual;
+        if(stockActualizado < cantidad) {
+            return res.status(404).json({ message: "El stock actual ha cambiado durante su proceso de compra" });
+        }
+
+        return res.status(200).json({ stockActualizado: rows[0].stockactual });
+
+    } catch (error) {
+        console.log(error)
+
+        return res.status(500).json({ message: "Internal Server Error." });
+    }
+}
