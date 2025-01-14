@@ -195,10 +195,10 @@ export const verificarStock = async(req, res) =>  {
 
         const stockActualizado = rows[0].stockactual;
         if(stockActualizado < cantidad) {
-            return res.status(404).json({ message: "El stock actual ha cambiado durante su proceso de compra" });
+            return res.status(409).json({ message: "El stock actual ha cambiado durante su proceso de compra" });
         }
 
-        return res.status(200).json({ stockActualizado: rows[0].stockactual });
+        return res.status(200).json({ message: "Stock disponible" });
 
     } catch (error) {
         console.log(error)
