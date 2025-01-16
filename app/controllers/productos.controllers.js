@@ -48,7 +48,7 @@ export const obtenerProductos = async(req, res) => {
         // console.log(rows);
         res.json(rows);  
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server Error." });
+        return res.status(500).json({ message: error });
     }
 }
 
