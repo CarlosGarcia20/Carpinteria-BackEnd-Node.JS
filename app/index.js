@@ -8,6 +8,7 @@ import loginRoutes from './routes/login.routes.js';
 import productsRoutes from './routes/productos.routes.js';
 import catalogosRoutes from './routes/catalogos.routes.js';
 import cartRoutes from './routes/cart.routes.js'
+import cotizacionesRoutes from './routes/cotizaciones.routes.js'
 
 // Servicios para el funcionamiento del backend
 import morgan from "morgan";
@@ -38,6 +39,7 @@ app.use(userRoutes);
 app.use(productsRoutes);
 app.use(catalogosRoutes);
 app.use(cartRoutes);
+app.use(cotizacionesRoutes);
 
 //Middleware global para el manejo de errores
 app.use((err, req, res, next) => {
