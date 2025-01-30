@@ -1,4 +1,4 @@
-import e from "express";
+import e, { json } from "express";
 import { pool } from "../db.js";
 
 // Funciones a exportar del catalogo
@@ -63,11 +63,15 @@ export const obtenerTipoMueble = async (req, res) => {
 
 export const crearCotizacion = async(req, res) => {
     try {
-        const {idMueble, idMaterial, dimensiones, cantidad, adicional, idTipoMueble, idUsuarioCreo} = req.body;
+        const {
+            idMueble, idMaterial, dimensiones, cantidad, adicional, idTipoMueble, idUsuarioCreo, color
+        } = req.body;
 
         const { rows } = await pool.query(
-            `INSERT INTO com_cotizaciones (idmueble, idmaterial, dimensiones, cantidad, adicional, estado, idtipomueble, idusuariocreo)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            `INSERT INTO com_cotizaciones (
+                idmueble, idmaterial, dimensiones, cantidad, adicional, estado, idtipomueble, idusuariocreo, colorhex
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
             [
                 idMueble,
                 idMaterial,
@@ -76,7 +80,8 @@ export const crearCotizacion = async(req, res) => {
                 adicional,
                 "PA",
                 idTipoMueble,
-                idUsuarioCreo
+                idUsuarioCreo,
+                color
             ]
         );
 
@@ -98,11 +103,14 @@ export const obtenerCotizacionesPorUsuario = async(req, res) => {
                 com_cotizaciones.cantidad,
                 com_cotizaciones.adicional,
                 com_cotizaciones.estado,
+                com_cotizaciones.colorhex,
                 conf_muebles.descripcion AS mueble,
-                conf_materiales.descripcion AS material
+                conf_materiales.descripcion AS material,
+                conf_tipomueble.descripcion AS tipoMueble
             FROM com_cotizaciones
             INNER JOIN conf_muebles ON conf_muebles.idmueble = com_cotizaciones.idmueble
             INNER JOIN conf_materiales ON conf_materiales.idmaterial = com_cotizaciones.idmaterial
+            INNER JOIN conf_tipomueble ON conf_tipomueble.idtipomueble = com_cotizaciones.idtipomueble
             WHERE idusuariocreo = $1
             `,
             [idUser]
