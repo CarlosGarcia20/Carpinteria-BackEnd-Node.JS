@@ -64,14 +64,14 @@ export const obtenerTipoMueble = async (req, res) => {
 export const crearCotizacion = async(req, res) => {
     try {
         const {
-            idMueble, idMaterial, dimensiones, cantidad, adicional, idTipoMueble, idUsuarioCreo, color
+            idMueble, idMaterial, dimensiones, cantidad, adicional, idTipoMueble, idUsuarioCreo, color, fecha
         } = req.body;
 
         const { rows } = await pool.query(
             `INSERT INTO com_cotizaciones (
-                idmueble, idmaterial, dimensiones, cantidad, adicional, estado, idtipomueble, idusuariocreo, colorhex
+                idmueble, idmaterial, dimensiones, cantidad, adicional, estado, idtipomueble, idusuariocreo, colorhex, fecha
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
             [
                 idMueble,
                 idMaterial,
@@ -81,7 +81,8 @@ export const crearCotizacion = async(req, res) => {
                 "PA",
                 idTipoMueble,
                 idUsuarioCreo,
-                color
+                color,
+                fecha
             ]
         );
 
@@ -104,6 +105,7 @@ export const obtenerCotizacionesPorUsuario = async(req, res) => {
                 com_cotizaciones.adicional,
                 com_cotizaciones.estado,
                 com_cotizaciones.colorhex,
+                com_cotizaciones.fecha,
                 conf_muebles.descripcion AS mueble,
                 conf_materiales.descripcion AS material,
                 conf_tipomueble.descripcion AS tipoMueble
