@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { obtenerCotizacionesUsuarios } from "../controllers/admincotizaciones.controllers.js";
+import { cambiarEstadoCotizacion, obtenerCotizacionesUsuarios } from "../controllers/admincotizaciones.controllers.js";
 
 const router = Router();
 
 router.get('/admincotizaciones', obtenerCotizacionesUsuarios)
+
+router.post('/admincotizaciones/correo', cambiarEstadoCotizacion);
 
 export default router;

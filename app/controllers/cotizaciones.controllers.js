@@ -106,6 +106,7 @@ export const obtenerCotizacionesPorUsuario = async(req, res) => {
                 com_cotizaciones.colorhex,
                 com_cotizaciones.fecha,
                 com_cotizaciones.imagen,
+                com_cotizaciones.mensajecorreo,
                 conf_muebles.descripcion AS mueble,
                 conf_materiales.descripcion AS material,
                 com_cotizaciones.idmaterial,
