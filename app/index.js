@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import { PORT } from './config.js';
 import path from 'path';
@@ -22,7 +25,7 @@ const app = express()
 
 app.use(morgan('dev'))
 app.use(cors({
-    origin: 'http://localhost:4200', // Especifica el origen permitido
+    origin: process.env.API_FRONTEND || 'http://localhost:4200', // Especifica el origen permitido
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
 }));

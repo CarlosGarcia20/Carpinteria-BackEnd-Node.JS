@@ -1,10 +1,13 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const {
-    DB_USER = "postgres",
-    DB_HOST = "localhost",
-    DB_PASSWORD = "123456",
+    DATABASE_URL = "localhost",
     DB_DATABASE = "prueba",
+    DB_USER = "root",
+    DB_PASSWORD = "root",
     DB_PORT = "5432",
     PORT = process.env.PORT || 4000,
-    SECRET_JWT_KEY = 'esta-es-una-increible-llave-secreta-pero-bien-largota-macizo',
-    REFRESJ_JWT_KEY = 'esta-es-una-increible-llave-secreta-pero-bien-largota-macizo-para-el-refresh-token',
+    SECRET_JWT_KEY = 'default-secret-key',
+    REFRESJ_JWT_KEY = 'default-refresh-key',
 } = process.env
