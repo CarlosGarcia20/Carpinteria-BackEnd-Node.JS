@@ -25,7 +25,7 @@ const app = express()
 
 app.use(morgan('dev'))
 app.use(cors({
-    origin: process.env.API_FRONTEND || 'http://localhost:4200', // Especifica el origen permitido
+    origin: process.env.API_FRONTEND || 'http://localhost:4000', // Especifica el origen permitido
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
 }));
